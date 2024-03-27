@@ -3,13 +3,14 @@
 #include <cctype>
 #include <regex>
 #include <unordered_set>
+#include <fstream>
 
 using namespace std;
 
 unordered_set<string> keywords = {"default","if", "else", "while", "for", "return","auto","break"
-,"case","const","continue","do","double","else", "enum","extern", "for", "goto",
-"if","inline","nullptr","register","restrict","return","sizeof", "static", "struct", "switch","typedef","union",
-"void","volatile","while" /* ... and more keywords */};
+        ,"case","const","continue","do","double","else", "enum","extern", "for", "goto",
+                                  "if","inline","nullptr","register","restrict","return","sizeof", "static", "struct", "switch","typedef","union",
+                                  "void","volatile","while","struct" /* ... and more keywords */};
 unordered_set<string> dataTypes = {"int", "char", "float", "double","long","signed","unsigned",}; // Data types
 
 
@@ -32,7 +33,7 @@ bool isDataType(const string& token) {
 }
 
 bool isOperator(const string& token) {
-    regex op("(?:\\+|\\-|\\*|\\/|\\=|\\==|\\!=|\\>|\\>=|\\<|\\<=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\+\\+|\\-\\-|\\+=|\\-=|\\*=|\\/=|\\%=|\\&=|\\|=|\\^=|\\<\\<=|\\>\\>=|\\-\\>|\\.|\\-\\>|\\.\\*|\\-\\>\\*|\\+|\\-|\\*|\\%|\\/|\\&|\\||\\^|\\<|\\>|\\=|\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\;|\\.|\\:\\:|\\?\\:|\\#|\\#\\#|\\#|\\.\\.\\.|<%|<:|<::|%:|%:%:|new|delete|new\\[\\]|\\[\\]|\\(.*\\)|\\<\\<\\=|\\>\\>\\=)");
+    regex op("(?:\\+|\\-|\\*|\\|\\/|\\=|\\==|\\!=|\\>|\\>=|\\<|\\<=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\+\\+|\\-\\-|\\+=|\\-=|\\=|\\/=|\\%=|\\&=|\\|=|\\^=|\\<\\<=|\\>\\>=|\\-\\>|\\.|\\-\\>|\\.\\|\\-\\>\\|\\+|\\-|\\|\\%|\\/|\\&|\\||\\^|\\<|\\>|\\=|\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\;|\\.|\\:\\:|\\?\\:|\\.\\.\\.|<%|<:|<::|%:|%:%:|new|delete|new\\[\\]|\\[\\]|\\(.\\)|\\<\\<\\=|\\>\\>\\=)");
     return regex_match(token, op);
 }
 
@@ -40,12 +41,24 @@ bool isOperator(const string& token) {
 void lexAnalyze(const string& code) {
     int i = 0;
     string currentToken;
+    int line = 1;
 
     while (i < code.length()) {
         char c = code[i];
+//        if (c == '\n') {
+//            ++line;
+//        }
 
         if (isspace(c)) {
             i++;
+            continue;
+        }
+
+        if (c == '#') {
+            // skip macro, because we will not support it
+            while (code[i] != 0 && code[i] != '\n') {
+                i++;
+            }
             continue;
         }
 
@@ -103,31 +116,94 @@ void lexAnalyze(const string& code) {
                 cout << "Unrecognized token: " << currentToken << endl;
             }
             currentToken.clear();
+        } else if (c == '\'' || c == '\"') {
+            // Handle string literals
+            char quote = c;
+            cout<< "punctuation: "<<quote<<endl;
+            i++;
+            while (i < code.length() && code[i] != quote) {
+
+                currentToken += code[i];
+                i++;
+            }
+
+
+
+            if (i < code.length() && code[i] == quote) {
+
+                i++;
+            }
+            if (c == '\'' ){
+                cout << "Character: " << currentToken << endl;}
+            else if( c == '\"'){
+                cout << "String: " << currentToken << endl;
+            }
+
+            cout<< "punctuation: "<<quote<<endl;
+            currentToken.clear();
         } else {
             cout << "Unrecognized token: " << c << endl;
             i++;
         }
     }
+
 }
 
 
 string removeComments(const string& code) {
     regex singleLineComment(R"(/\/.*)");  // Matches single-line comments (//...)
-    regex multiLineComment(R"(\/\*.*?\*/)"); // Matches multi-line comments (/* ... */)
+    regex multiLineComment(R"(\/\.?\/)"); // Matches multi-line comments (/ ... */)
     string cleanCode = regex_replace(code, singleLineComment, "");
     cleanCode = regex_replace(cleanCode, multiLineComment, "");
     return cleanCode;
 }
 
-int main() {
 
-    string code = "int x = 10;" // This is a comment\n
-                    "float y = 3.14 + x;" /* This is another comment */
-                    "char default initial = 'A'";
-    cout << "Code without comments::" << endl;
-    string cleanCode = removeComments(code);
-    cout << cleanCode << endl;
-    cout << "Symbol table:: " << endl;
-    lexAnalyze(code);
+// void read_file(std::string filepath, std::string& buffer) {
+//  std::ifstream file(filepath);
+//  std::string line;
+//  while (getline(file, line)) {
+//  buffer.push_back('\n');
+//  buffer += line;
+//  }
+//  }
+
+string readFromFile(string filepath) {
+    ifstream inputFile;
+    string code = " ", line;
+    inputFile.open(filepath, ios::in);
+    while (inputFile.good()) {
+        getline(inputFile, line);
+        if (inputFile.eof())
+            break;
+        code += line;
+        code += '\n';
+    }
+    return code;
+}
+
+int main() {
+    string filepath;
+
+    cout << "Enter file path: ";
+    cin >> filepath;
+    // Read the entire file content into the 'code' string
+    string code = readFromFile(filepath);
+
+    // Check if there was an error reading the file
+    if (code.empty()) {
+        std::cerr << "Error: Could not read file '" << filepath << "'" << std::endl;
+        return 1;
+    }
+
+    // Print the code without comments
+    std::cout << "Code without comments::" << std::endl;
+    std::string cleanCode = removeComments(code);
+    std::cout << cleanCode << std::endl;
+
+    // Perform lexical analysis on the clean code
+    std::cout << "Tokens:: " << std::endl;
+    lexAnalyze(cleanCode);
+
     return 0;
 }
