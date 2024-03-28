@@ -104,7 +104,33 @@ void lexAnalyze(const string& code) {
 
             currentToken.clear();
 
-        } else if (isdigit(c) || c == '+' || c == '-') {
+        }else if(c=='0' && (code[i+1] == 'x' || code[i+1] == 'X')){
+			currentToken += c;
+			i++;
+			currentToken += code[i];
+			i++;
+			while (i < code.length() && ((code[i] >= '0' && code[i] <= '9') || (code[i] >= 'A' && code[i] <= 'F') )) {
+				currentToken += code[i];
+				i++;
+			}
+			bool hasMoreChars = false;
+			while (i < code.length() &&   isalnum(code[i])) {
+				// If there are more digits, mark the flag and continue
+				hasMoreChars = true;
+				currentToken += code[i];
+				i++;
+			}
+
+			// If there are no more digits after the octal number,
+			// then currentToken represents an octal number
+			if (!hasMoreChars) {
+				cout << "Hexadecimal Number: " << currentToken << endl;
+			} else {
+				// Otherwise, it's an unrecognized token
+				cout << "Unrecognized token: " << currentToken << endl;
+			}
+			currentToken.clear();
+		} else if (isdigit(c) || c == '+' || c == '-') {
             // Handle numbers
             currentToken += c;
             i++;
