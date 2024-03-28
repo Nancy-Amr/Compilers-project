@@ -33,7 +33,10 @@ bool isDataType(const string& token) {
 }
 
 bool isOperator(const string& token) {
-    regex op("(?:\\+|\\-|\\*|\\|\\/|\\=|\\==|\\!=|\\>|\\>=|\\<|\\<=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<|\\>\\>|\\+\\+|\\-\\-|\\+=|\\-=|\\=|\\/=|\\%=|\\&=|\\|=|\\^=|\\<\\<=|\\>\\>=|\\-\\>|\\.|\\-\\>|\\.\\|\\-\\>\\|\\+|\\-|\\|\\%|\\/|\\&|\\||\\^|\\<|\\>|\\=|\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\;|\\.|\\:\\:|\\?|\\:|\\.\\.\\.|<%|<:|<::|%:|%:%:|new|delete|new\\[\\]|\\[\\]|\\(.\\)|\\<\\<\\=|\\>\\>\\=)");
+    regex op("(?:\\+|\\-|\\*|\\|\\/|\\=|\\==|\\!=|\\>|\\>=|\\<|\\<=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<"
+             "|\\>\\>|\\+\\+|\\-\\-|\\+=|\\-=|\\=|\\/=|\\%=|\\&=|\\|=|\\^=|\\<\\<=|\\>\\>=|\\-\\>|\\.|\\-\\>"
+             "|\\.\\|\\-\\>\\|\\+|\\-|\\|\\%|\\/|\\&|\\||\\^|\\<|\\>|\\=|\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\;|"
+             "\\.|\\:\\:|\\?|\\:|\\.\\.\\.|<%|<:|<::|%:|%:%:|new|delete|new\\[\\]|\\[\\]|\\(.\\)|\\<\\<\\=|\\>\\>\\=)");
     return regex_match(token, op);
 }
 
@@ -153,8 +156,8 @@ void lexAnalyze(const string& code) {
 string removeComments(const string& code) {
     regex singleLineComment(R"(\/\/[^\n]*)"); // Matches single-line comments (//...)
     regex multiLineComment(R"(\/\*[^*]*\*+([^/*][^*]*\*+)*\/)");
-    string cleanCode = regex_replace(code, singleLineComment, "");
-    cleanCode = regex_replace(cleanCode, multiLineComment, "");
+    string cleanCode = regex_replace(code, multiLineComment, "");
+    cleanCode = regex_replace(cleanCode, singleLineComment, "");
     return cleanCode;
 }
 
