@@ -34,9 +34,9 @@ bool isDataType(const string& token) {
 
 bool isOperator(const string& token) {
     regex op("(?:\\+|\\-|\\*|\\|\\/|\\=|\\==|\\!=|\\>|\\>=|\\<|\\<=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<"
-             "|\\>\\>|\\+\\+|\\-\\-|\\+=|\\-=|\\=|\\/=|\\%=|\\&=|\\|=|\\^=|\\<\\<=|\\>\\>=|\\-\\>|\\.|\\-\\>"
-             "|\\.\\|\\-\\>\\|\\+|\\-|\\|\\%|\\/|\\&|\\||\\^|\\<|\\>|\\=|\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\;|"
-             "\\.|\\:\\:|\\?|\\:|\\.\\.\\.|<%|<:|<::|%:|%:%:|new|delete|new\\[\\]|\\[\\]|\\(.\\)|\\<\\<\\=|\\>\\>\\=)");
+             "|\\>\\>|\\+\\+|\\-\\-|\\+=|\\-=|\\=|\\/=|\\%=|\\&=|\\|=|\\^=|\\<\\<=|\\>\\>=|\\-\\>|\\.|\\-\\>|\\.\\"
+             "|\\-\\>\\|\\+|\\-|\\|\\%|\\/|\\&|\\||\\^|\\<|\\>|\\=|\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\;|\\.|\\:\\:"
+             "|\\?|\\:|\\.\\.\\.|<%|<:|<::|%:|%:%:|new|delete|new\\[\\]|\\[\\]|\\(.\\)|\\<\\<\\=|\\>\\>\\=)");
     return regex_match(token, op);
 }
 
@@ -44,13 +44,9 @@ bool isOperator(const string& token) {
 void lexAnalyze(const string& code) {
     int i = 0;
     string currentToken;
-    int line = 1;
 
     while (i < code.length()) {
         char c = code[i];
-//        if (c == '\n') {
-//            ++line;
-//        }
 
         if (isspace(c)) {
             i++;
@@ -66,32 +62,24 @@ void lexAnalyze(const string& code) {
         }
 
         if (isalpha(c) || c == '_') {
-            // Handle identifiers and keywords
-            if (isdigit(c)) {
-                cout << "Identifier: " << c;
+        // Handle identifiers and keywords
+            currentToken += c;
+            i++;
+            while (i < code.length() && isValidIdentifierChar(code[i])) {
+                currentToken += code[i];
                 i++;
-                while (i < code.length() && isValidIdentifierChar(code[i])) {
-                    cout << code[i];
-                    i++;
-                }
-                cout << endl;
-            } else {
-                currentToken += c;
-                i++;
-                while (i < code.length() && isValidIdentifierChar(code[i])) {
-                    currentToken += code[i];
-                    i++;
-                }
-
-                if (isKeyword(currentToken)) {
-                    cout << "Keyword: " << currentToken << endl;
-                } else if (isDataType(currentToken)) {
-                    cout << "Data Type: " << currentToken << endl;
-                } else {
-                    cout << "Identifier: " << currentToken << endl; // Other identifiers
-                }
-                currentToken.clear();
             }
+
+            if (isKeyword(currentToken)) {
+                cout << "Keyword: " << currentToken << endl;
+            } else if (isDataType(currentToken)) {
+                cout << "Data Type: " << currentToken << endl;
+            } else {
+                cout << "Identifier: " << currentToken << endl; // Other identifiers
+            }
+
+            currentToken.clear();
+
         } else if (isdigit(c) || c == '+' || c == '-') {
             // Handle numbers
             currentToken += c;
@@ -160,17 +148,6 @@ string removeComments(const string& code) {
     cleanCode = regex_replace(cleanCode, singleLineComment, "");
     return cleanCode;
 }
-
-
-
-// void read_file(std::string filepath, std::string& buffer) {
-//  std::ifstream file(filepath);
-//  std::string line;
-//  while (getline(file, line)) {
-//  buffer.push_back('\n');
-//  buffer += line;
-//  }
-//  }
 
 string readFromFile(string filepath) {
     ifstream inputFile;
