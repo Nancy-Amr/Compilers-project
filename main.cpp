@@ -89,17 +89,6 @@ void lexAnalyze(const string& code) {
                 }
                 currentToken.clear();
             }
-        } else if (isOperator(string(1, c))) {
-            // Handle operators
-            currentToken += c;
-            i++;
-            while (i < code.length() && isOperator(currentToken + code[i])) {
-                currentToken += code[i];
-                i++;
-            }
-
-            cout << "Operator: " << currentToken << endl;
-            currentToken.clear();
         } else if (isdigit(c) || c == '+' || c == '-') {
             // Handle numbers
             currentToken += c;
@@ -115,6 +104,17 @@ void lexAnalyze(const string& code) {
             else {
                 cout << "Unrecognized token: " << currentToken << endl;
             }
+            currentToken.clear();
+        } else if (isOperator(string(1, c))) {
+            // Handle operators
+            currentToken += c;
+            i++;
+            while (i < code.length() && isOperator(currentToken + code[i])) {
+                currentToken += code[i];
+                i++;
+            }
+
+            cout << "Operator: " << currentToken << endl;
             currentToken.clear();
         } else if (c == '\'' || c == '\"') {
             // Handle string literals
