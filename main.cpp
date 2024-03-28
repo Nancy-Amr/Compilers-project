@@ -32,12 +32,36 @@ bool isDataType(const string& token) {
     return dataTypes.count(token) > 0;
 }
 
-bool isOperator(const string& token) {
-    regex op("(?:\\+|\\-|\\*|\\|\\/|\\=|\\==|\\!=|\\>|\\>=|\\<|\\<=|\\&\\&|\\|\\||\\!|\\&|\\||\\^|\\~|\\<\\<"
-             "|\\>\\>|\\+\\+|\\-\\-|\\+=|\\-=|\\=|\\/=|\\%=|\\&=|\\|=|\\^=|\\<\\<=|\\>\\>=|\\-\\>|\\.|\\-\\>|\\.\\"
-             "|\\-\\>\\|\\+|\\-|\\|\\%|\\/|\\&|\\||\\^|\\<|\\>|\\=|\\(|\\)|\\[|\\]|\\{|\\}|\\,|\\;|\\.|\\:\\:"
-             "|\\?|\\:|\\.\\.\\.|<%|<:|<::|%:|%:%:|new|delete|new\\[\\]|\\[\\]|\\(.\\)|\\<\\<\\=|\\>\\>\\=)");
-    return regex_match(token, op);
+int isOperator(const string& token) {
+
+    regex Unary("\\+\\+|\\-\\-|\\!|\\-\\>"); //1
+    regex arithmetic("\\+|\\-|\\*|\\/|\\%");//2
+    regex assignment("\\=|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\^\\=");//4
+    regex relational("\\=\\=|\\!\\=|\\>\\=|\\<\\=|\\>|\\<");//3
+    regex logical("\\&\\&|\\|\\|");//5
+    regex bitwise("\\&|\\||\\^|\\~|\\<\\<|\\>\\>");//6
+    regex random("\\?|\\:|\\.");//7
+    regex punctuation("\\,|\\;|\\[|\\]|\\(|\\)|\\{|\\}");//8
+
+    if (regex_match(token, Unary)) {
+        return 1;
+    } else if (regex_match(token, arithmetic)) {
+        return 2;
+    } else if (regex_match(token, relational)) {
+        return 3;
+    } else if (regex_match(token, assignment)) {
+        return 4;
+    } else if (regex_match(token, logical)) {
+        return 5;
+    } else if (regex_match(token, bitwise)) {
+        return 6;
+    } else if (regex_match(token, random)) {
+        return 7;
+    }else if (regex_match(token, punctuation)) {
+        return 8;
+    }else {
+        return 0;
+    }
 }
 
 
@@ -104,9 +128,19 @@ void lexAnalyze(const string& code) {
                 currentToken += code[i];
                 i++;
             }
+            if(isOperator(string(1, c))==8)
+            {
+                cout<<"Punctuation: "<<currentToken<<endl;
+                currentToken.clear();
+            }
+            else
+            {
+                cout << "Operator: " << currentToken << endl;
+                currentToken.clear();
 
-            cout << "Operator: " << currentToken << endl;
-            currentToken.clear();
+            }
+
+
         } else if (c == '\'' || c == '\"') {
             // Handle string literals
             char quote = c;
