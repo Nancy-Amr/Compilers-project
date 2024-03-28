@@ -151,12 +151,13 @@ void lexAnalyze(const string& code) {
 
 
 string removeComments(const string& code) {
-    regex singleLineComment(R"(/\/.*)");  // Matches single-line comments (//...)
-    regex multiLineComment(R"(\/\.?\/)"); // Matches multi-line comments (/ ... */)
+    regex singleLineComment(R"(\/\/[^\n]*)"); // Matches single-line comments (//...)
+    regex multiLineComment(R"(\/\*[^*]*\*+([^/*][^*]*\*+)*\/)");
     string cleanCode = regex_replace(code, singleLineComment, "");
     cleanCode = regex_replace(cleanCode, multiLineComment, "");
     return cleanCode;
 }
+
 
 
 // void read_file(std::string filepath, std::string& buffer) {
