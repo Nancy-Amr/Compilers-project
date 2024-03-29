@@ -212,23 +212,30 @@ void lexAnalyze(const string& code) {
             }
 
 
-        } else if (isdigit(c) || c == '+' || c == '-') {
-            // Handle numbers
-            currentToken += c;
-            i++;
-            while (i < code.length() && (isdigit(code[i]) || code[i] == '.' || code[i] == 'e' || code[i] == 'E' || (i > 0 && (code[i - 1] == 'e' || code[i - 1] == 'E') && (code[i] == '-' || code[i] == '+')))) {
-                currentToken += code[i];
-                i++;
-            }
+        }else if ((c >='0' && c <= '9') || c == '+' || c == '-') {
+			// Handle numbers
+			currentToken += c;
+			i++;
+			while (i < code.length() && (isdigit(code[i]) || code[i] == '.' || code[i] == 'e' || code[i] == 'E' || (i > 0 && (code[i - 1] == 'e' || code[i - 1] == 'E') && (code[i] == '-' || code[i] == '+')))) {
+				currentToken += code[i];
+				i++;
+			}
+			bool hasMoreChars = false;
+			while (i < code.length() &&   isalnum(code[i])) {
+				// If there are more digits, mark the flag and continue
+				hasMoreChars = true;
+				currentToken += code[i];
+				i++;
+			}
 
-            if (isValidNumber(currentToken)) {
-                cout << "Number: " << currentToken << endl;
-            }
-            else {
-                cout << "Unrecognized token: " << currentToken << endl;
-            }
-            currentToken.clear();
-        }  else if (c == '\'' || c == '\"') {
+			if (isValidNumber(currentToken) && !hasMoreChars) {
+				cout << "Number: " << currentToken << endl;
+			}
+			else {
+				cout << "Unrecognized token: " << currentToken << endl;
+			}
+			currentToken.clear();
+		}  else if (c == '\'' || c == '\"') {
             // Handle string literals
             char quote = c;
             cout<< "punctuation: "<<quote<<endl;
@@ -309,3 +316,4 @@ int main() {
 
     return 0;
 }
+
