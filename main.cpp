@@ -130,23 +130,7 @@ void lexAnalyze(const string& code) {
 				cout << "Unrecognized token: " << currentToken << endl;
 			}
 			currentToken.clear();
-		} else if (isdigit(c) || c == '+' || c == '-') {
-            // Handle numbers
-            currentToken += c;
-            i++;
-            while (i < code.length() && (isdigit(code[i]) || code[i] == '.' || code[i] == 'e' || code[i] == 'E' || (i > 0 && (code[i - 1] == 'e' || code[i - 1] == 'E') && (code[i] == '-' || code[i] == '+')))) {
-                currentToken += code[i];
-                i++;
-            }
-
-            if (isValidNumber(currentToken)) {
-                cout << "Number: " << currentToken << endl;
-            }
-            else {
-                cout << "Unrecognized token: " << currentToken << endl;
-            }
-            currentToken.clear();
-        } else if (isOperator(string(1, c))) {
+		}else if (isOperator(string(1, c))) {
             // Handle operators
             currentToken += c;
             i++;
@@ -167,7 +151,23 @@ void lexAnalyze(const string& code) {
             }
 
 
-        } else if (c == '\'' || c == '\"') {
+        } else if (isdigit(c) || c == '+' || c == '-') {
+            // Handle numbers
+            currentToken += c;
+            i++;
+            while (i < code.length() && (isdigit(code[i]) || code[i] == '.' || code[i] == 'e' || code[i] == 'E' || (i > 0 && (code[i - 1] == 'e' || code[i - 1] == 'E') && (code[i] == '-' || code[i] == '+')))) {
+                currentToken += code[i];
+                i++;
+            }
+
+            if (isValidNumber(currentToken)) {
+                cout << "Number: " << currentToken << endl;
+            }
+            else {
+                cout << "Unrecognized token: " << currentToken << endl;
+            }
+            currentToken.clear();
+        }  else if (c == '\'' || c == '\"') {
             // Handle string literals
             char quote = c;
             cout<< "punctuation: "<<quote<<endl;
