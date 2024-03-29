@@ -39,7 +39,7 @@ int isOperator(const string& token) {
     regex relational("\\=\\=|\\!\\=|\\>\\=|\\<\\=|\\>|\\<");//3
     regex logical("\\&\\&|\\|\\|");//5
     regex bitwise("\\&|\\||\\^|\\~|\\<\\<|\\>\\>");//6
-    regex random("\\?|\\:|\\.");//7
+    regex other("\\?|\\:|\\.");//7
     regex punctuation("\\,|\\;|\\[|\\]|\\(|\\)|\\{|\\}");//8
 
     if (regex_match(token, Unary)) {
@@ -54,7 +54,7 @@ int isOperator(const string& token) {
         return 5;
     } else if (regex_match(token, bitwise)) {
         return 6;
-    } else if (regex_match(token, random)) {
+    } else if (regex_match(token, other)) {
         return 7;
     } else if (regex_match(token, punctuation)) {
         return 8;
