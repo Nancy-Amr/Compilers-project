@@ -104,7 +104,65 @@ void lexAnalyze(const string& code) {
 
             currentToken.clear();
 
-        }else if(c=='0' && (code[i+1] == 'x' || code[i+1] == 'X')){
+        }else if (c == '0' && isdigit(code[i+1]) ) {
+			currentToken += c;
+			i++;
+			while (i < code.length() && (code[i] >= '0' && code[i] <= '7')) {
+				currentToken += code[i];
+				i++;
+			}
+
+			// Check if there are any more digits after the octal number
+			bool hasMoreChars = false;
+			while (i < code.length() &&   isalnum(code[i])) {
+				// If there are more digits, mark the flag and continue
+				hasMoreChars = true;
+				currentToken += code[i];
+				i++;
+			}
+
+			// If there are no more digits after the octal number,
+			// then currentToken represents an octal number
+			if (!hasMoreChars) {
+				cout << "Octal Number: " << currentToken << endl;
+			} else {
+				// Otherwise, it's an unrecognized token
+				cout << "Unrecognized token: " << currentToken << endl;
+			}
+			currentToken.clear();
+		}
+		else if(c=='0' && (code[i+1] == 'b' || code[i+1] == 'B')){
+			currentToken += c;
+			i++;
+			currentToken += code[i];
+			i++;
+
+			while (i < code.length() && (code[i] == '0' || code[i] == '1')) {
+				currentToken += code[i];
+				i++;
+			}
+			bool hasMoreChars = false;
+			while (i < code.length() &&  isalnum(code[i])) {
+				// If there are more digits, mark the flag and continue
+				hasMoreChars = true;
+				currentToken += code[i];
+				i++;
+			}
+			if(currentToken == "0b" || currentToken == "0B"){
+				hasMoreChars = true;
+			}
+
+			// If there are no more digits after the octal number,
+			// then currentToken represents an octal number
+			if (!hasMoreChars) {
+				cout << "Binary Number: " << currentToken << endl;
+			} else {
+				// Otherwise, it's an unrecognized token
+				cout << "Unrecognized token: " << currentToken << endl;
+			}
+			currentToken.clear();
+		}
+		else if(c=='0' && (code[i+1] == 'x' || code[i+1] == 'X')){
 			currentToken += c;
 			i++;
 			currentToken += code[i];
@@ -119,6 +177,9 @@ void lexAnalyze(const string& code) {
 				hasMoreChars = true;
 				currentToken += code[i];
 				i++;
+			}
+			if(currentToken == "0x" || currentToken == "0X"){
+				hasMoreChars = true;
 			}
 
 			// If there are no more digits after the octal number,
