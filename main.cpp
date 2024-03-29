@@ -33,7 +33,6 @@ bool isDataType(const string& token) {
 }
 
 int isOperator(const string& token) {
-
     regex Unary("\\+\\+|\\-\\-|\\!|\\-\\>"); //1
     regex arithmetic("\\+|\\-|\\*|\\/|\\%");//2
     regex assignment("\\=|\\+\\=|\\-\\=|\\*\\=|\\/\\=|\\%\\=|\\&\\=|\\|\\=|\\^\\=");//4
@@ -57,9 +56,9 @@ int isOperator(const string& token) {
         return 6;
     } else if (regex_match(token, random)) {
         return 7;
-    }else if (regex_match(token, punctuation)) {
+    } else if (regex_match(token, punctuation)) {
         return 8;
-    }else {
+    } else {
         return 0;
     }
 }
@@ -104,7 +103,7 @@ void lexAnalyze(const string& code) {
 
             currentToken.clear();
 
-        }else if (c == '0' && isdigit(code[i+1]) ) {
+        } else if (c == '0' && isdigit(code[i+1]) ) {
 			currentToken += c;
 			i++;
 			while (i < code.length() && (code[i] >= '0' && code[i] <= '7')) {
@@ -131,12 +130,11 @@ void lexAnalyze(const string& code) {
 			}
 			currentToken.clear();
 		}
-		else if(c=='0' && (code[i+1] == 'b' || code[i+1] == 'B')){
+		else if( c == '0' && (code[i+1] == 'b' || code[i+1] == 'B')){
 			currentToken += c;
 			i++;
 			currentToken += code[i];
 			i++;
-
 			while (i < code.length() && (code[i] == '0' || code[i] == '1')) {
 				currentToken += code[i];
 				i++;
@@ -162,12 +160,13 @@ void lexAnalyze(const string& code) {
 			}
 			currentToken.clear();
 		}
-		else if(c=='0' && (code[i+1] == 'x' || code[i+1] == 'X')){
+		else if(c == '0' && (code[i+1] == 'x' || code[i+1] == 'X')){
 			currentToken += c;
 			i++;
 			currentToken += code[i];
 			i++;
-			while (i < code.length() && ((code[i] >= '0' && code[i] <= '9') || (code[i] >= 'A' && code[i] <= 'F') )) {
+			while (i < code.length() && ((code[i] >= '0' && code[i] <= '9') || (code[i] >= 'A' && code[i] <= 'F')
+                                                                               || (code[i] >= 'a' && code[i] <= 'f'))) {
 				currentToken += code[i];
 				i++;
 			}
@@ -212,11 +211,12 @@ void lexAnalyze(const string& code) {
             }
 
 
-        }else if ((c >='0' && c <= '9') || c == '+' || c == '-') {
+        } else if ((c >='0' && c <= '9') || c == '+' || c == '-') {
 			// Handle numbers
 			currentToken += c;
 			i++;
-			while (i < code.length() && (isdigit(code[i]) || code[i] == '.' || code[i] == 'e' || code[i] == 'E' || (i > 0 && (code[i - 1] == 'e' || code[i - 1] == 'E') && (code[i] == '-' || code[i] == '+')))) {
+			while (i < code.length() && (isdigit(code[i]) || code[i] == '.' || code[i] == 'e' || code[i] == 'E' ||
+            (i > 0 && (code[i - 1] == 'e' || code[i - 1] == 'E') && (code[i] == '-' || code[i] == '+')))) {
 				currentToken += code[i];
 				i++;
 			}
@@ -241,20 +241,17 @@ void lexAnalyze(const string& code) {
             cout<< "punctuation: "<<quote<<endl;
             i++;
             while (i < code.length() && code[i] != quote) {
-
                 currentToken += code[i];
                 i++;
             }
 
-
-
             if (i < code.length() && code[i] == quote) {
-
                 i++;
             }
-            if (c == '\'' ){
-                cout << "Character: " << currentToken << endl;}
-            else if( c == '\"'){
+            if (c == '\'' ) {
+                cout << "Character: " << currentToken << endl;
+            }
+            else if( c == '\"') {
                 cout << "String: " << currentToken << endl;
             }
 
