@@ -13,6 +13,23 @@ unordered_set<string> keywords = {"default","if", "else", "while", "for", "retur
                                   "void","volatile","while","struct" /* ... and more keywords */};
 unordered_set<string> dataTypes = {"int", "char", "float", "double","long","signed","unsigned",}; // Data types
 
+typedef std::vector<std::pair<std::string, std::vector<int>>> symbol_table_t;
+symbol_table_t symbol_table;
+int add_to_symbol_table(std::string token_name, int offset) {
+
+    int index = 0;
+    for (auto& symbol : symbol_table) {
+        if (token_name == symbol.first) {
+            symbol.second.push_back(offset);
+            return index;
+        }
+        index++;
+    }
+    symbol_table.push_back({ token_name, { offset } });
+    return index;
+
+}
+
 
 
 bool isValidNumber(const string& number) {
@@ -67,6 +84,7 @@ int isOperator(const string& token) {
 void lexAnalyze(const string& code) {
     int i = 0;
     string currentToken;
+    int counter=0;
 
     while (i < code.length()) {
         char c = code[i];
@@ -95,10 +113,20 @@ void lexAnalyze(const string& code) {
 
             if (isKeyword(currentToken)) {
                 cout << "Keyword: " << currentToken << endl;
+                counter++;
+
             } else if (isDataType(currentToken)) {
                 cout << "Data Type: " << currentToken << endl;
-            } else {
+                counter++;
+
+            }
+
+
+            else {
+                int index=add_to_symbol_table(currentToken, counter);
+
                 cout << "Identifier: " << currentToken << endl; // Other identifiers
+                counter++;
             }
 
             currentToken.clear();
@@ -124,9 +152,11 @@ void lexAnalyze(const string& code) {
 			// then currentToken represents an octal number
 			if (!hasMoreChars) {
 				cout << "Octal Number: " << currentToken << endl;
+				counter++;
 			} else {
 				// Otherwise, it's an unrecognized token
 				cout << "Unrecognized token: " << currentToken << endl;
+				counter++;
 			}
 			currentToken.clear();
 		}
@@ -154,9 +184,11 @@ void lexAnalyze(const string& code) {
 			// then currentToken represents an octal number
 			if (!hasMoreChars) {
 				cout << "Binary Number: " << currentToken << endl;
+				counter++;
 			} else {
 				// Otherwise, it's an unrecognized token
 				cout << "Unrecognized token: " << currentToken << endl;
+				counter++;
 			}
 			currentToken.clear();
 		}
@@ -185,9 +217,11 @@ void lexAnalyze(const string& code) {
 			// then currentToken represents an octal number
 			if (!hasMoreChars) {
 				cout << "Hexadecimal Number: " << currentToken << endl;
+				counter++;
 			} else {
 				// Otherwise, it's an unrecognized token
 				cout << "Unrecognized token: " << currentToken << endl;
+				counter++;
 			}
 			currentToken.clear();
 		}else if (isOperator(string(1, c))) {
@@ -201,11 +235,13 @@ void lexAnalyze(const string& code) {
             if(isOperator(string(1, c))==8)
             {
                 cout<<"Punctuation: "<<currentToken<<endl;
+                counter++;
                 currentToken.clear();
             }
             else
             {
                 cout << "Operator: " << currentToken << endl;
+                counter++;
                 currentToken.clear();
 
             }
@@ -230,15 +266,18 @@ void lexAnalyze(const string& code) {
 
 			if (isValidNumber(currentToken) && !hasMoreChars) {
 				cout << "Number: " << currentToken << endl;
+				counter++;
 			}
 			else {
 				cout << "Unrecognized token: " << currentToken << endl;
+				counter++;
 			}
 			currentToken.clear();
 		}  else if (c == '\'' || c == '\"') {
             // Handle string literals
             char quote = c;
             cout<< "punctuation: "<<quote<<endl;
+            counter++;
             i++;
             while (i < code.length() && code[i] != quote) {
                 currentToken += code[i];
@@ -250,15 +289,19 @@ void lexAnalyze(const string& code) {
             }
             if (c == '\'' ) {
                 cout << "Character: " << currentToken << endl;
+                counter++;
             }
             else if( c == '\"') {
                 cout << "String: " << currentToken << endl;
+                counter++;
             }
 
             cout<< "punctuation: "<<quote<<endl;
+            counter++;
             currentToken.clear();
         } else {
             cout << "Unrecognized token: " << c << endl;
+            counter++;
             i++;
         }
     }
@@ -301,7 +344,7 @@ int main() {
         std::cerr << "Error: Could not read file '" << filepath << "'" << std::endl;
         return 1;
     }
-
+    
     // Print the code without comments
     std::cout << "Code without comments::" << std::endl;
     std::string cleanCode = removeComments(code);
@@ -311,6 +354,13 @@ int main() {
     std::cout << "Tokens:: " << std::endl;
     lexAnalyze(cleanCode);
 
+        for (const auto& entry : symbol_table) {
+        cout << "Symbol: " << entry.first<<"\t\t\t";
+        cout << "Offset: ";
+        for (int value : entry.second) {
+            cout << value << " ";
+        }
+        cout << endl;
+    }
     return 0;
 }
-
