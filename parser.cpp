@@ -130,6 +130,8 @@ bool epsilonSearch(string Result[]) {
 	}
 	return false;
 }
+
+
 int findPos(string c) {
 	 char x = 'a';
 
@@ -152,15 +154,83 @@ int findPos(string c) {
 	    }
 	    if(c=="_")
 	    return 62;
+	    else if(c=="(")
+             return 63;
+        else if(c==")")
+             return 64;
+        else if(c=="{")
+             return 65;
+        else if(c=="}")
+            return 66;
+        else if(c==";")
+             return 67;
+        else if(c=="#")
+             return 68;
+        else if(c=="int")
+             return 69;
+        else if(c=="float")
+             return 70;
+        else if(c=="double")
+             return 71;
+        else if(c=="break")
+             return 72;
+        else if(c=="continue")
+             return 73;
+        else if(c=="return")
+             return 74;
+        else if(c=="goto")
+             return 75;
+        else if(c=="+")
+             return 76;
+        else if(c=="-")
+             return 77;
+        else if(c=="%")
+             return 78;
+        else if(c=="*")
+             return 79;
+        else if(c=="/")
+             return 80;
+        else if(c=="~")
+             return 81;
+        else if(c=="&")
+             return 82;
+        else if(c=="|")
+             return 83;
+        else if(c=="/")
+             return 84;
+        else if(c=="^")
+             return 85;
+        else if(c=="<<")
+             return 86;
+        else if(c==">>")
+             return 87;
+        else if(c=="true")
+             return 88;
+        else if(c=="false")
+             return 89;
+        else if(c=="<")
+             return 90;
+        else if(c==">")
+             return 91;
+        else if(c=="<=")
+             return 92;
+        else if(c==">=")
+             return 93;
+        else if(c=="==")
+             return 94;
+        else if(c=="!=")
+             return 95;
+
 	    else if(c=="$"){
-	    	return 63;
+	    	return 96;
 	    }
+
+
 	    else{
 	    	return -1;
 	    }
 
 }
-
 
 
 
